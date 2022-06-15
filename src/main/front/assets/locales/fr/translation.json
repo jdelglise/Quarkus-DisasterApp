@@ -1,0 +1,34 @@
+{
+  "LOGIN": {
+    "USERNAME": "Nom d'utilisateur",
+    "PASSWORD": "Mot de passe",
+    "LOGIN": "Connexion",
+    "FORGOT_PASSWORD": "Mot de passe oublié ?",
+    "REGISTER_NOW": "S'inscrire",
+    "ENTITY_REGISTER": "Enregistrer une nouvelle entité",
+    "ENTITY_LIST": "Quelles sont les entités active ?"
+  },
+  "MESSAGING" : {
+    "NEW_MESSAGE": "Nouveau message",
+    "RECIPIENT": "Destinataire",
+    "CONVERSATIONS": "Conversations",
+    "MESSAGE": "Message",
+    "CONTACT" : "Contacter"
+  },
+  "ERRORS" : {
+    "INVALID_RECIPIENT": "Destinataire inconnu",
+    "SOMETHING_WENT_WRONG": "Une erreur est survenue"
+  },
+  "PUBLICATION" : {
+    "REQUEST": "Demandes",
+    "OFFERS": "Offres",
+    "MY_REQUEST": "Mes demandes",
+    "MY_OFFERS": "Mes offres",
+    "RELATED_PUBLICATIONS" : "Publications correspondantes"
+  },
+  "GENERIC" : {
+    "VIEW": "Voir",
+    "SEARCH": "Rechercher",
+    "CLOSE": "Clôturer"
+  }
+}

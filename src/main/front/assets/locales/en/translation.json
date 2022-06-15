@@ -1,0 +1,34 @@
+{
+  "LOGIN": {
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "LOGIN": "Login",
+    "FORGOT_PASSWORD": "Forgot password ?",
+    "REGISTER_NOW": "Register now",
+    "ENTITY_REGISTER": "Register a new entity",
+    "ENTITY_LIST": "Show active entities"
+  },
+  "MESSAGING" : {
+    "NEW_MESSAGE": "New message",
+    "RECIPIENT": "Recipient",
+    "CONVERSATIONS": "Conversations",
+    "MESSAGE": "Message",
+    "CONTACT" : "Contact"
+  },
+  "ERRORS" : {
+    "INVALID_RECIPIENT": "Invalid recipient",
+    "SOMETHING_WENT_WRONG": "Something went wrong"
+  },
+  "PUBLICATION" : {
+    "REQUEST": "Requests",
+    "OFFERS": "Offers",
+    "MY_REQUEST": "My requests",
+    "MY_OFFERS": "My offers",
+    "RELATED_PUBLICATIONS" : "Related publications"
+  },
+  "GENERIC" : {
+    "VIEW": "View",
+    "SEARCH": "Search",
+    "CLOSE": "Close"
+  }
+}

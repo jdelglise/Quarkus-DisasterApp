@@ -1,0 +1,47 @@
+quarkus:
+  mongodb:
+    # mongodb://[username:password@]host1[:port1][,...hostN[:portN]][/[defaultauthdb][?options]]
+   connection-string: mongodb://root:example@localhost:27017
+   database: groupe4
+  http:
+    cors: true
+    insecure-requests: REDIRECT
+    ssl-port: 8443
+    ssl:
+      client-auth: REQUEST
+      certificate:
+        key-store-file-type: JKS
+        key-store-file: src/main/resources/security/tls-keystore.jks
+        key-store-password: secret
+        trust-store-file: src/main/resources/security/tls-truststore.jks
+        trust-store-password: secret
+    auth:
+      proactive: true
+  log:
+    console:
+      format: "%d{HH:mm:ss:ms} %-5p [%c{2.}] (%X{User}|%X{Correlation-Id}) %s%e%n"
+    category:
+      "org.mongodb":
+        level: WARN
+mp:
+  jwt:
+    verify:
+      issuer: http://demo-app.unamur.org
+      audiences: http://demo-app.unamur.org
+
+
+groupe4:
+  security:
+    keystore: src/main/resources/security/keystore.p12
+    password: changeit
+    access-token:
+      alias: groupe4
+      issuer: http://demo-app.unamur.org
+      audiences: http://demo-app.unamur.org
+      time-to-live: 300
+    refresh-token:
+      alias: groupe4
+      issuer: http://demo-app.unamur.org
+      audiences: http://demo-app.unamur.org
+      time-to-live: 3600
+

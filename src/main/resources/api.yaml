@@ -1,0 +1,1249 @@
+openapi: 3.0.1
+info:
+  title: Groupe 4
+  # termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+  - url: https://localhost:8443/
+
+tags:
+- name: User
+  description: Everything about Users
+- name: Auth
+  description: Everything about authentication (JWToken)
+- name: Entity
+  description: Everything about Entities
+- name: Admin
+  description: Dedicated routes requiring admin rights
+- name: Category
+  description: Everything about Categories
+- name: Publication
+  description: Everything about Publications
+- name: Messaging
+  description: All the operations related to messaging
+paths:
+  /users:
+    get:
+      tags:
+      - User
+      summary: Get the list of all Users
+      operationId: getAllUsers
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /user:
+    get:
+      tags:
+      - User
+      summary: Get own user data based on token
+      operationId: getUser
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    put:
+      tags:
+      - User
+      summary: Update user based on token
+      operationId: updateUser
+      requestBody:
+        description: Update user based on token and body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /user/{id}:
+    get:
+      tags:
+      - User
+      summary: Get a User by id
+      security: 
+        - bearerAuth: []
+      operationId: getUserById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          description: Not Found
+  /user/preference:
+    get:
+      tags:
+      - User
+      summary: Get user preference based on token
+      operationId: getUserPreference
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPreference"
+        404:
+          description: Not Found
+    put:
+      tags:
+      - User
+      summary: Update user preference based on token
+      operationId: updateUserPreference
+      requestBody:
+        description: Update user preference based on token and body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+        required: true
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /user/password:
+    put:
+      tags:
+      - User
+      summary: Update a User's password
+      operationId: updatePassword
+      requestBody:
+        description: The new password
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Password'
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /user/disable:
+    put:
+      tags:
+      - User
+      summary: Disable a User #replace the delete operation
+      operationId: disableUser
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /user/enable:
+    put:
+      tags:
+      - User
+      summary: Enable a deactivated User 
+      operationId: enableAccount
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /admin/user/disable/{id}:
+    put:
+      tags:
+      - Admin
+      summary: Disable a User #replace the delete operation
+      operationId: disableUserAdmin
+      parameters:
+        - in: path
+          name: id
+          description: ID of an existing User
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /admin/user/enable/{id}:
+    put:
+      tags:
+      - Admin
+      summary: Enable a deactivated User 
+      operationId: enableUserAdmin
+      parameters:
+        - in: path
+          name: id
+          description: ID of an existing User
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /admin/user/validate/{id}:
+    put:
+      tags:
+      - Admin
+      summary: Validate a new User 
+      operationId: validateUser
+      parameters:
+        - in: path
+          name: id
+          description: ID of an existing User
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /admin/user/unvalidated:
+    get:
+      tags:
+      - Admin
+      summary: Get the list of all unvalidated Users
+      operationId: getUnvalidatedUsers
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /admin/user/role/admin/{id}:
+    put:
+      tags:
+      - Admin
+      summary: Assign the Admin role to an existing User with ID
+      operationId: assignAdminRole
+      parameters:
+        - in: path
+          name: id
+          description: ID of an existing User
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /auth/login: 
+    post:
+      tags:
+      - Auth
+      summary: Get a token for a user
+      operationId: getToken
+      requestBody:
+        description: Needs the User credentials for which we want to have the token
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+  /auth/register: 
+    post:
+      tags:
+      - Auth
+      summary: Create a user
+      operationId: register
+      requestBody:
+        description: Create a user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        201:
+          description: created
+  /auth/revoke:
+    get:
+      tags:
+        - Auth
+      summary: Revoke a refresh token
+      operationId: revoke
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+
+  /auth/refresh:
+    get:
+      tags:
+        - Auth
+      summary: Get Tokens from refresh token 
+      operationId: refresh
+      responses:
+        200:
+          description: OK
+
+  /entity:
+    get:
+      tags:
+        - Entity
+      summary: Get the list of all Entities
+      operationId: getEntities
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Entity"
+    post:
+      tags:
+        - Entity
+      summary: Create an Entity
+      operationId: registerEntity
+      requestBody:
+        description: Create an Entity
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+        required: true
+      responses:
+        201:
+          description: created
+    
+  /entity/{id}:
+    get:
+      tags:
+        - Entity
+      summary: Get an Entity by id
+      operationId: getEntityById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entity"
+        404:
+          description: Not Found
+  /admin/entity/validate/{id}:
+    put:
+      tags:
+        - Admin
+      summary: Validate an Entity
+      operationId: validateEntity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+  /admin/entity/unvalidated:
+    get:
+      tags:
+        - Admin
+      summary: Get the list of all Entities unvalidated
+      operationId: getEntitiesUnvalidated
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Entity"
+  /admin/category/create:
+   post:
+      tags:
+        - Admin
+      summary: Create a new Category
+      operationId: createCategory
+      requestBody:
+        description: Create a Category
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      responses:
+        201:
+          description: created
+  /admin/category/modify:
+    post:
+      tags:
+        - Admin
+      summary: Modify a Category (create a new one)
+      operationId: modifyCategory
+      requestBody:
+        description: Modify a Category (create a new one)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+        required: true
+      responses:
+        201:
+          description: modified
+  /admin/category/disable/{id}:
+    put:
+      tags:
+        - Admin
+      summary: Deactivate an existing category
+      operationId: disableCategory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+  /admin/category/reactivate/{id}:
+    put:
+      tags:
+        - Admin
+      summary: Reactivate a deactivated existing category
+      operationId: reactivateCategory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+  /admin/user/password/{login}/:
+    put:
+      tags:
+      - Admin
+      summary: Update a User's password
+      operationId: updatePasswordAdmin
+      parameters:
+        - in: path
+          name: login
+          description: login of User to update
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: password
+          description: The new password to update
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: created
+        404:
+          description: Not Found
+  /category:
+    get:
+      tags:
+        - Category
+      summary: Get the list of all Categories
+      operationId: getCategories
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+  /category/type/{type}:
+    get:
+      tags:
+        - Category
+      summary: Get the list of all Categories for a type
+      operationId: getCategoriesByType
+      parameters:
+        - in: path
+          name: type
+          description: Type of category (OFFERS/REQUESTS)
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+  /category/{id}:
+    get:
+      tags:
+        - Category
+      summary: Get an existing category
+      operationId: getCategory
+      parameters:
+        - in: path
+          name: id
+          description: ID of an existing category
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        404:
+          description: Not Found  
+  /publications:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of all Publications
+      operationId: getAllPublications
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"
+  /publications/offers:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of all Offers
+      operationId: getAllOffers
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"
+  /publications/offers/category/{id}:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of all Offers
+      operationId: getOffersBycategory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"
+  /publications/requests:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of all Requests
+      operationId: getAllRequests
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"
+  /publications/requests/category/{id}:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of all Requests
+      operationId: getRequestsBycategory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"
+  /publication:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of user Publications
+      operationId: getMyPublications
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"  
+    post:
+      tags:
+        - Publication
+      summary: Create a new Publication
+      operationId: createPublication
+      requestBody:
+        description: Create a Publication
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publication'
+        required: true
+      responses:      
+        201:
+          description: created
+  /publication/offer:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of user Offers
+      operationId: getMyOffers
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"  
+  /publication/requests:
+    get:
+      tags:
+        - Publication
+      summary: Get the list of user Requests
+      operationId: getMyRequests
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication" 
+  /publication/{id}:
+    put:
+      tags:
+        - Publication
+      summary: Update a Publication
+      operationId: updatePublication
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existing Publication
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Publication'
+        required: true
+      responses:
+        204:
+          description: No Content
+        404:
+          description: Not Found
+    get:
+      tags:
+      - Publication
+      summary: Get a publication by id
+      security: 
+        - bearerAuth: []
+      operationId: getPublication
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Publication"
+        404:
+          description: Not Found
+  /publication/close/{id}:
+    put:
+      tags:
+        - Publication
+      summary: Close an existing publication
+      operationId: closePublication
+      parameters:
+        - in: path
+          name: id
+          description: ID of an existing Publication
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+  /publication/reopen/{id}:
+    put:
+      tags:
+        - Publication
+      summary: Reactivate a closed publication
+      operationId: reactivatePublication
+      parameters:
+        - in: path
+          name: id
+          description: ID of a closed Publication
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+  /publication/related/{id}:
+    put:
+      tags:
+        - Publication
+      summary: Get publications related to the id received
+      operationId: getRelatedPublications
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Publication"
+  /messaging/send/{login}:
+    post:
+      tags:
+        - Messaging
+      summary: Send a message to a user
+      operationId: sendMessageToUser
+      parameters:
+        - in: path
+          name: login
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Send a message to a user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      responses:      
+        201:
+          description: created
+  /messaging/send/conversation/{id}:
+    post:
+      tags:
+        - Messaging
+      summary: Send a message to a conversation
+      operationId: sendMessageToConversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Send a message to a conversation
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Message'
+        required: true
+      responses:      
+        201:
+          description: created
+  /messaging/conversation/{id}:
+    get:
+      tags:
+      - Messaging
+      summary: Get a conversation by id
+      security: 
+        - bearerAuth: []
+      operationId: getConversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversation"
+        404:
+          description: Not Found
+  /messaging/conversation:
+    get:
+      tags:
+        - Messaging
+      summary: Get the list of all conversation
+      operationId: getConversations
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConversationOverview"  
+
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+    #oauth2:
+    #  type: oauth2
+    #  flows:
+    #    clientCredentials :
+    #      tokenUrl: /auth/login
+    #      refreshUrl: /auth/refresh
+    #      scopes: { }    # No scopes in API for now
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        login:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        validated:
+          type: boolean
+          readOnly: true
+        disabled:
+          type: boolean
+          readOnly: true
+        lastConnection:
+          type: string
+          format: date
+          readOnly: true
+        role:
+          type: string
+          readOnly: true
+        addressList:
+          $ref: "#/components/schemas/AddressList"
+      required: 
+        - login
+        - email
+        - lastName
+        - firstName
+        - addressList
+    UserPreference:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        publicBirthdate:
+          type: boolean
+        publicEmail:
+          type: boolean
+        publicLastName:
+          type: boolean
+        publicFirstName:
+          type: boolean
+        publicPhoneNumber:
+          type: boolean
+        publicAddresses:
+          type: boolean
+      required: 
+        - publicBirthdate
+        - publicEmail
+        - publicLastName
+        - publicFirstName
+        - publicPhoneNumber
+        - publicAddresses
+    AddressList:
+      type: array
+      properties:
+        item:
+          $ref: "#/components/schemas/Address"
+      items:
+        $ref: "#/components/schemas/Address"
+      required:
+        - items
+    Address:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        street:
+          type: string
+        number:
+          type: string
+          writeOnly: true
+        city:
+          type: string
+        postCode:
+          type: string
+          writeOnly: true
+        country:
+          type: string
+          writeOnly: true
+      required: 
+        - street
+        - number
+        - city
+        - postCode
+        - country
+    CustomFormFieldList:
+      type: array
+      properties:
+        item:
+          $ref: "#/components/schemas/CustomFormField"
+      items:
+        $ref: "#/components/schemas/CustomFormField"
+      required:
+        - items
+    CustomFormField:
+      type: object
+      properties:
+        initalValue:
+          type: string
+        label:
+          type: string
+        name:
+          type: string
+        required:
+          type: boolean
+      required: 
+        - label
+        - name
+        - required
+    CustomFieldValueList:
+      type: array
+      properties:
+        item:
+          $ref: "#/components/schemas/CustomFieldValue"
+      items:
+        $ref: "#/components/schemas/CustomFieldValue"
+      required:
+        - items
+    CustomFieldValue:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required: 
+        - name
+        - value
+    Entity:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        validated:
+          type: boolean
+          readOnly: true
+        addressList:
+          $ref: "#/components/schemas/AddressList"
+        administrator:
+          type: string
+        picture:
+          type: string
+          format: base64
+      required:
+        - name
+    UserRegistration:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required: 
+        - username
+        - password
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required: 
+        - username
+        - password
+    Password:
+      type: string
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+          readOnly: true
+        token_type:
+          type: string
+          readOnly: true
+        expires_in:
+          type: integer
+          readOnly: true
+        refresh_token:
+          type: string
+          readOnly: true
+      required: 
+        - access_token
+        - refresh_token
+        - expires_in
+        - token_type
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+        type:
+          type: string
+          enum: [ OFFERS, REQUESTS ]
+        customFields:
+          $ref: "#/components/schemas/CustomFormFieldList"
+        expirationInDays:
+          type: integer
+        disabled:
+          type: boolean
+          readOnly: true
+        creationDate:
+          type: string
+          format: date
+          readOnly: true
+        prioriy:
+          type: integer
+      required:
+        - name
+        - type
+    Publication:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        categoryId:
+          type: string
+        type:
+          type: string
+          enum: [ OFFERS, REQUESTS ]
+        creator:
+          type: string
+          readOnly: true
+        mandated:
+          type: string
+        creationDate:
+          type: string
+          format: date
+          readOnly: true
+        lastUpdateDate:
+          type: string
+          format: date
+          readOnly: true
+        expirationInDays:
+          type: integer
+        title:
+          type: string
+        message:
+          type: string
+        customValues:
+          $ref: "#/components/schemas/CustomFieldValueList"
+        closed:
+          type: boolean
+          readOnly: true
+        prioriy:
+          type: integer
+        childPublicationId:
+          type: array
+          items:
+            type: string
+        parentpublicationId:
+          type: string
+        keywords:
+          type: array
+          items:
+            type: string
+      required:
+        - category
+        - type
+        - title
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+          readOnly: true
+        sender:
+          type: string
+          readOnly: true
+        creationDate:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+          readOnly: true
+      required:
+        - message
+    MessageList:
+      type: array
+      properties:
+        item:
+          $ref: "#/components/schemas/Message"
+      items:
+        $ref: "#/components/schemas/Message"
+      required:
+        - items
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+        correspondent:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        messages:
+          $ref: "#/components/schemas/MessageList"
+      required:
+        - id
+        - creationDate
+        - correspondent
+        - messages
+    ConversationOverview:
+      type: object
+      properties:
+        id:
+          type: string
+        correspondent:
+          type: string
+        lastUpdate:
+          type: string
+          format: date-time
+        unreadMessages:
+          type: integer
+        lastMessage:
+          $ref: "#/components/schemas/Message"
+      required:
+        - id
+        - correspondent
+        - lastUpdate
+        - unreadMessages
+        - lastMessage
+security:
+  - bearerAuth: []     
+    
